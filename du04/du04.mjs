@@ -29,4 +29,4 @@ createServer((req, res) => {
       res.end(data);
     }
   });
-}).listen(3000, () => console.log("Server běží na http://localhost:3000"));
+}).listen(3000, () => console.log("Server runs on http://localhost:3000"));
