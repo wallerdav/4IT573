@@ -63,7 +63,7 @@
             <% if (todo.done) { %>
               <a href="/toggle-todo/<%= todo.id %>">↪ Nehotové</a>
               &nbsp;
-              <a href="/remove-todo/<%= todo.id %>">✗ Odstranit</a>
+              <a href="/remove-todo/<%= todo.id %>?user=<%= userId %>">✗ Odstranit</a>
               <% } else { %>
                 <a href="/toggle-todo/<%= todo.id %>">✔ Hotové</a>
                 <% } %>

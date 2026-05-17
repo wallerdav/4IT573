@@ -62,7 +62,12 @@ app.get("/toggle-todo/:id", async (c) => {
     const todo = await db
         .select()
         .from(todosTable)
-        .where(and(eq(todosTable.id, id), eq(todosTable.userId, userId)))
+        .where(
+            and(
+                eq(todosTable.id, id),
+                eq(todosTable.userId, userId)
+            )
+        )
         .get();
 
     if (!todo) return c.text("Not found", 404);
@@ -70,11 +75,14 @@ app.get("/toggle-todo/:id", async (c) => {
     await db
         .update(todosTable)
         .set({ done: !todo.done })
-        .where(eq(todosTable.id, id));
+        .where(
+            and(
+                eq(todosTable.id, id),
+                eq(todosTable.userId, userId)
+            )
+        );
 
-    broadcast({ type: "todos" });
-
-    return c.redirect("/");
+    return c.redirect(`/todo/${id}`);
 });
 
 
@@ -88,11 +96,17 @@ app.post("/update-priority", async (c) => {
     await db
         .update(todosTable)
         .set({ priority })
-        .where(eq(todosTable.id, id));
+        .where(
+            and(
+                eq(todosTable.id, id),
+                eq(todosTable.userId, userId)
+            )
+        );
 
-    return c.redirect("/");
+    const redirect = body.redirect || "/";
+
+    return c.redirect(redirect);
 });
-
 
 app.get("/todo/:id", async (c) => {
     const userId = c.get("userId");
@@ -119,4 +133,21 @@ app.get("/todo/:id", async (c) => {
     });
 
     return c.html(html);
+});
+
+
+app.get("/remove-todo/:id", async (c) => {
+    const userId = c.get("userId");
+    const id = Number(c.req.param("id"));
+
+    await db
+        .delete(todosTable)
+        .where(
+            and(
+                eq(todosTable.id, id),
+                eq(todosTable.userId, userId)
+            )
+        );
+
+    return c.redirect("/");
 });

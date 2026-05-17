@@ -60,7 +60,7 @@
   <% if (todo.done) { %>
     <a href="/toggle-todo/<%= todo.id %>">&#8617; Označit jako nehotové</a>
     &nbsp;
-    <a href="/remove-todo/<%= todo.id %>">&#10007; Odstranit úkol</a>
+    <a href="/remove-todo/<%= todo.id %>?user=<%= userId %>">&#10007; Odstranit úkol</a>
     <% } else { %>
       <a href="/toggle-todo/<%= todo.id %>">&#10003; Označit jako hotové</a>
       <% } %>
