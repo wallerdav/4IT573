@@ -42,15 +42,15 @@
     <tr>
       <th>Priorita</th>
       <td>
-       <form method="post" action="/update-priority">
-  <input type="hidden" name="id" value="<%= todo.id %>" />
-  <input type="hidden" name="redirect" value="/todo/<%= todo.id %>" />
-  <select name="priority" onchange="this.form.submit()">
-    <option value="normal" <%= todo.priority === 'normal' ? 'selected' : '' %>>normal</option>
-    <option value="high" <%= todo.priority === 'high' ? 'selected' : '' %>>high</option>
-    <option value="low" <%= todo.priority === 'low' ? 'selected' : '' %>>low</option>
-  </select>
-</form>
+        <form method="post" action="/update-priority">
+          <input type="hidden" name="id" value="<%= todo.id %>" />
+          <input type="hidden" name="redirect" value="/todo/<%= todo.id %>" />
+          <select name="priority" onchange="this.form.submit()">
+            <option value="normal" <%=todo.priority==='normal' ? 'selected' : '' %>>normal</option>
+            <option value="high" <%=todo.priority==='high' ? 'selected' : '' %>>high</option>
+            <option value="low" <%=todo.priority==='low' ? 'selected' : '' %>>low</option>
+          </select>
+        </form>
       </td>
     </tr>
   </table>
@@ -77,5 +77,22 @@
           </form>
         </fieldset>
 </body>
+
+<script>
+  const ws = new WebSocket("ws://localhost:3001");
+  const currentId = "<%= todo.id %>";
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === "todo-detail" && msg.id == currentId) {
+      location.reload();
+    }
+
+    if (msg.type === "todo-deleted" && msg.id == currentId) {
+      document.body.innerHTML = "<h1>Todo bylo smazáno</h1>";
+    }
+  };
+</script>
 
 </html>

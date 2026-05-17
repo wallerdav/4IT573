@@ -8,11 +8,16 @@
 </head>
 
 <body>
-  <h1>&#9989; Todo seznam</h1>
 
-  <p>Hotovo: <%= todos.filter(t=> t.done).length %> / <%= todos.length %>
+  <h1>Todo seznam</h1>
+
+  <p>
+    Hotovo:
+    <%= todos.filter(t=> t.done).length %> / <%= todos.length %>
   </p>
-  <progress value="<%= todos.filter(t => t.done).length %>" max="<%= todos.length %>"></progress>
+
+  <progress value="<%= todos.filter(t => t.done).length %>" max="<%= todos.length %>">
+  </progress>
 
   <hr />
 
@@ -26,12 +31,14 @@
         <th>Priorita</th>
       </tr>
     </thead>
+
     <tbody>
       <% for (const todo of todos) { %>
         <tr>
           <td>
             <%= todo.id %>
           </td>
+
           <td>
             <a href="/todo/<%= todo.id %>">
               <% if (todo.done) { %>
@@ -43,22 +50,25 @@
                     <% } %>
             </a>
           </td>
+
           <td align="center">
             <% if (todo.done) { %>
-              <strong>&#10003; Hotovo</strong>
+              <strong>✔ Hotovo</strong>
               <% } else { %>
-                <em>&#8230; Čeká</em>
+                <em>… Čeká</em>
                 <% } %>
           </td>
+
           <td>
             <% if (todo.done) { %>
-              <a href="/toggle-todo/<%= todo.id %>">&#8617; Nehotové</a>
+              <a href="/toggle-todo/<%= todo.id %>">↪ Nehotové</a>
               &nbsp;
-              <a href="/remove-todo/<%= todo.id %>">&#10007; Odstranit</a>
+              <a href="/remove-todo/<%= todo.id %>">✗ Odstranit</a>
               <% } else { %>
-                <a href="/toggle-todo/<%= todo.id %>">&#10003; Hotové</a>
+                <a href="/toggle-todo/<%= todo.id %>">✔ Hotové</a>
                 <% } %>
           </td>
+
           <td>
             <form method="post" action="/update-priority">
               <input type="hidden" name="id" value="<%= todo.id %>" />
@@ -70,6 +80,7 @@
               </select>
             </form>
           </td>
+
         </tr>
         <% } %>
     </tbody>
@@ -79,13 +90,28 @@
 
   <fieldset>
     <legend><strong>Přidat nový úkol</strong></legend>
+
     <form method="post" action="/add-todo">
       <label for="title">Název úkolu:</label>
       <br />
       <input id="title" name="title" size="40" placeholder="Co je potřeba udělat?" />
-      <button type="submit">&#43; Přidat</button>
+      <button type="submit">+ Přidat</button>
     </form>
   </fieldset>
+
 </body>
+
+<script>
+  const ws = new WebSocket("ws://localhost:3001");
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === "todos") {
+      // jednoduše reload bez hacků
+      window.location.reload();
+    }
+  };
+</script>
 
 </html>
